@@ -91,7 +91,7 @@ public class MultiBoxTracker {
     boxPaint.setColor(Color.WHITE);
     boxPaint.setStyle(Style.STROKE);
     boxPaint.setStrokeWidth(25.0f);
-    boxPaint.setStrokeCap(Cap.ROUND);
+    boxPaint.setStrokeCap(Cap.SQUARE);
     boxPaint.setStrokeJoin(Join.ROUND);
     boxPaint.setStrokeMiter(100);
 
@@ -141,14 +141,8 @@ public class MultiBoxTracker {
       Path boundingBracket = getPrettyBoundingBox(trackedPos);
       canvas.drawPath(boundingBracket, boxPaint);
 
-      final String labelString =
-          !TextUtils.isEmpty(recognition.title)
-              ? String.format("%s %.2f", recognition.title, (100 * recognition.detectionConfidence))
-              : String.format("%.2f", (100 * recognition.detectionConfidence));
-      //            borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top,
-      // labelString);
-      borderedText.drawText(
-          canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
+      final String labelString = recognition.title;
+      borderedText.drawText(canvas, (trackedPos.right-trackedPos.left)/2, (trackedPos.top-trackedPos.bottom)/2, labelString, boxPaint);
     }
   }
 
