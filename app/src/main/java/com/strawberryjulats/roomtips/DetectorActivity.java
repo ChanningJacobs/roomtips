@@ -56,10 +56,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/labelmap.txt";
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
   // Minimum detection confidence to track a detection.
-  private static final Set<String> TARGET_LABELS = new HashSet<String>(Arrays.asList("chair", "couch", "table", "desk", "lamp"));
+  private static final Set<String> TARGET_LABELS = new HashSet<String>(Arrays.asList("bed", "bench", "chair", "clock", "couch", "desk", "dining table", "door", "mirror", "potted plant", "sink", "toilet", "vase"));
   private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
   private static final boolean MAINTAIN_ASPECT = false;
-  private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
+  private static final Size DESIRED_PREVIEW_SIZE = new Size(1280, 720);
   private static final boolean SAVE_PREVIEW_BITMAP = false;
   private static final float TEXT_SIZE_DIP = 10;
   private static final String TAG = "DetectorActivity";
@@ -200,7 +200,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             final Paint paint = new Paint();
             paint.setColor(Color.RED);
             paint.setStyle(Style.STROKE);
-            paint.setStrokeWidth(2.0f);
+            paint.setStrokeWidth(4.0f);
 
             float minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
             switch (MODE) {
@@ -213,11 +213,12 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 new LinkedList<Classifier.Recognition>();
 
             for (final Classifier.Recognition result : results) {
-	      if(!TARGET_LABELS.CONTAINS(result.getTitle())) continue
+	      if(!TARGET_LABELS.CONTAINS(result.getTitle())) continue;
               final RectF location = result.getLocation();
               if (location != null && result.getConfidence() >= minimumConfidence) {
-                canvas.drawRect(location, paint);
-
+		Path boundingBracket = getPrettyBoundingBox(location);
+                canvas.drawPath(boundingBracket, paint);
+		
                 cropToFrameTransform.mapRect(location);
 
                 result.setLocation(location);
@@ -232,6 +233,41 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
           }
         });
   }
+
+  protected Path getPrettyBoundingBox(RectF boundingBox) {
+    float left = boundingBox.left, right = boundingBox.right, top = boundingBox.top, bottom = boundingBox.bottom, topBarWidth = (right-left)/6;
+	
+    Path leftBracketVertical = new Path();
+    leftBracketVertical.moveTo(left, bottom);
+    leftBracketVertical.lineTo(left, top);
+    Path leftBracketTopBar = new Path();
+    leftBracketTopBar.moveTo(left, top);
+    leftBracketTopBar.lineTo(left+topBarWidth, top);
+    Path leftBracketBottomBar = new Path();
+    leftBracketBottomBar.moveTo(left, bottom);
+    leftBracketBottomBar.lineTo(left+topBarWidth, bottom);
+	
+    Path rightBracketVertical = new Path();
+    rightBracketVertical.moveTo(right, bottom);
+    rightBracketVertical.lineTo(right, top);
+    Path rightBracketTopBar = new Path();
+    rightBracketTopBar.moveTo(right, top);
+    rightBracketTopBar.lineTo(right-topBarWidth, top);
+    Path rightBracketBottomBar = new Path();
+    rightBracketBottomBar.moveTo(right, bottom);
+    rightBracketBottomBar.lineTo(right-topBarWidth, bottom);
+
+    Path leftBracket = new Path();
+    leftBracket.addPath(leftBracketVertical);
+    leftBracket.addPath(leftBracketTopBar);
+    leftBracket.addPath(leftBracketBottomBar);
+    Path rightBracket = new Path();
+    rightBracket.addPath(rightBracketVertical);
+    rightBracket.addPath(rightBracketTopBar);
+    rightBracket.addPath(rightBracketBottomBar);
+	
+    return leftBracket.addPath(rightBracket);
+    }
 
   @Override
   protected int getLayoutId() {
