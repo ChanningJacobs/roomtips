@@ -220,8 +220,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 	      if(!TARGET_LABELS.contains(result.getTitle())) continue;
               final RectF location = result.getLocation();
               if (location != null && result.getConfidence() >= minimumConfidence) {
-		Path boundingBracket = getPrettyBoundingBox(location);
-                canvas.drawPath(boundingBracket, paint);
+                  canvas.drawRect(location, paint);
 		
                 cropToFrameTransform.mapRect(location);
 
@@ -238,40 +237,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         });
   }
 
-  protected static Path getPrettyBoundingBox(RectF boundingBox) {
-    float left = boundingBox.left, right = boundingBox.right, top = boundingBox.top, bottom = boundingBox.bottom, topBarWidth = (right-left)/6;
-	
-    Path leftBracketVertical = new Path();
-    leftBracketVertical.moveTo(left, bottom);
-    leftBracketVertical.lineTo(left, top);
-    Path leftBracketTopBar = new Path();
-    leftBracketTopBar.moveTo(left, top);
-    leftBracketTopBar.lineTo(left+topBarWidth, top);
-    Path leftBracketBottomBar = new Path();
-    leftBracketBottomBar.moveTo(left, bottom);
-    leftBracketBottomBar.lineTo(left+topBarWidth, bottom);
-	
-    Path rightBracketVertical = new Path();
-    rightBracketVertical.moveTo(right, bottom);
-    rightBracketVertical.lineTo(right, top);
-    Path rightBracketTopBar = new Path();
-    rightBracketTopBar.moveTo(right, top);
-    rightBracketTopBar.lineTo(right-topBarWidth, top);
-    Path rightBracketBottomBar = new Path();
-    rightBracketBottomBar.moveTo(right, bottom);
-    rightBracketBottomBar.lineTo(right-topBarWidth, bottom);
-
-    Path leftBracket = new Path();
-    leftBracket.addPath(leftBracketVertical);
-    leftBracket.addPath(leftBracketTopBar);
-    leftBracket.addPath(leftBracketBottomBar);
-    Path rightBracket = new Path();
-    rightBracket.addPath(rightBracketVertical);
-    rightBracket.addPath(rightBracketTopBar);
-    rightBracket.addPath(rightBracketBottomBar);
-    leftBracket.addPath(rightBracket);
-    return leftBracket;
-    }
 
   @Override
   protected int getLayoutId() {

@@ -23,6 +23,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.text.TextUtils;
 import android.util.Log;
@@ -176,7 +177,10 @@ public class MultiBoxTracker {
 
       float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f;
       cornerSize = 1.0f;
-      canvas.drawRoundRect(trackedPos, cornerSize, cornerSize, boxPaint);
+      //canvas.drawRoundRect(trackedPos, cornerSize, cornerSize, boxPaint);
+
+      Path boundingBracket = getPrettyBoundingBox(trackedPos);
+      canvas.drawPath(boundingBracket, boxPaint);
 
       final String labelString =
           !TextUtils.isEmpty(recognition.title)
@@ -415,5 +419,40 @@ public class MultiBoxTracker {
     float detectionConfidence;
     int color;
     String title;
+  }
+
+  protected static Path getPrettyBoundingBox(RectF boundingBox) {
+    float left = boundingBox.left, right = boundingBox.right, top = boundingBox.top, bottom = boundingBox.bottom, topBarWidth = (right-left)/6;
+
+    Path leftBracketVertical = new Path();
+    leftBracketVertical.moveTo(left, bottom);
+    leftBracketVertical.lineTo(left, top);
+    Path leftBracketTopBar = new Path();
+    leftBracketTopBar.moveTo(left, top);
+    leftBracketTopBar.lineTo(left+topBarWidth, top);
+    Path leftBracketBottomBar = new Path();
+    leftBracketBottomBar.moveTo(left, bottom);
+    leftBracketBottomBar.lineTo(left+topBarWidth, bottom);
+
+    Path rightBracketVertical = new Path();
+    rightBracketVertical.moveTo(right, bottom);
+    rightBracketVertical.lineTo(right, top);
+    Path rightBracketTopBar = new Path();
+    rightBracketTopBar.moveTo(right, top);
+    rightBracketTopBar.lineTo(right-topBarWidth, top);
+    Path rightBracketBottomBar = new Path();
+    rightBracketBottomBar.moveTo(right, bottom);
+    rightBracketBottomBar.lineTo(right-topBarWidth, bottom);
+
+    Path leftBracket = new Path();
+    leftBracket.addPath(leftBracketVertical);
+    leftBracket.addPath(leftBracketTopBar);
+    leftBracket.addPath(leftBracketBottomBar);
+    Path rightBracket = new Path();
+    rightBracket.addPath(rightBracketVertical);
+    rightBracket.addPath(rightBracketTopBar);
+    rightBracket.addPath(rightBracketBottomBar);
+    leftBracket.addPath(rightBracket);
+    return leftBracket;
   }
 }

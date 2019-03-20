@@ -89,6 +89,7 @@ public abstract class CameraActivity extends AppCompatActivity
         }
 
         bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
+        bottomSheetLayout.setVisibility(View.INVISIBLE);
         gestureLayout = findViewById(R.id.gesture_layout);
         sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
         bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow);
@@ -229,6 +230,16 @@ public abstract class CameraActivity extends AppCompatActivity
         handlerThread = new HandlerThread("inference");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
+
+        View mCameraView = findViewById(R.id.texture);
+
+        mCameraView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     @Override
