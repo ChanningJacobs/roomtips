@@ -12,7 +12,10 @@ import android.graphics.RectF;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.util.Size;
 import android.view.MotionEvent;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import ai.fritz.core.Fritz;
@@ -42,14 +46,13 @@ import ai.fritz.vision.FritzVisionOrientation;
 import ai.fritz.vision.objectdetection.FritzVisionObjectPredictor;
 import ai.fritz.vision.objectdetection.FritzVisionObjectResult;
 
-import ai.fritz.camera.WatsonImageRecognitionService.localBinder;
 import static android.graphics.Bitmap.Config.ARGB_8888;
 import static java.lang.Thread.sleep;
 
 public class MainActivity extends BaseCameraActivity implements ImageReader.OnImageAvailableListener {
 
-    private boolean WIRSisBound = false;
-    WatsonImageRecognitionService WIRS = null;
+    //private boolean WIRSisBound = false;
+    //WatsonImageRecognitionService WIRS = null;
 
     private List<RectF> boxes = new ArrayList<RectF>();
     private AtomicBoolean lock = new AtomicBoolean();
@@ -102,8 +105,8 @@ public class MainActivity extends BaseCameraActivity implements ImageReader.OnIm
         labels.add("desk");
 
         // Bind to services
-        Intent i = new Intent(this, WatsonImageRecognitionService.class);
-        bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
+        //Intent i = new Intent(this, WatsonImageRecognitionService.class);
+        //bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -192,27 +195,36 @@ public class MainActivity extends BaseCameraActivity implements ImageReader.OnIm
                         Log.d("BITMAP", Integer.toString(heightY));
                         Log.d("BITMAP", " ");
 
-                        if(widthX > 0 && heightY > 0 && ((startY + heightY) < image.getHeight()) && ((startX + widthX) < image.getWidth())){
+                        if(startX > 0 && startY >0 && widthX > 0 && heightY > 0 && ((startY + heightY) < image.getHeight()) && ((startX + widthX) < image.getWidth())){
                             Bitmap resized = Bitmap.createBitmap(image, startX, startY, widthX, heightY);
                             int breakpoint_here = 0;
                             Log.d("IMAGEr", "(" + Integer.toString(resized.getWidth()) + ", " + Integer.toString(resized.getHeight()) + ")");
                             // Classify segmented image
-                            if(WIRSisBound){
-                                Log.d("SERVICE", WIRS.getCurrentTime());
+                            //if(WIRSisBound){
+                                //Log.d("SERVICE", WIRS.getCurrentTime());
                                 // save bitmap as image file
-                                String location = getApplicationContext().getFilesDir().toString();
-                                try (FileOutputStream out = new FileOutputStream(location + "/subImage")) {
-                                    resized.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-                                    // PNG is a lossless format, the compression factor (100) is ignored
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                File imageFile = new File(location + "/subImage");
-                                Log.d("SAVED", imageFile.getAbsolutePath().toString());
-                                Log.d("CLASSIFY", WIRS.classifyImage(imageFile));
-                            } else {
-                                Log.d("SERVICE", "Image service not bound");
+                            String location = getApplicationContext().getFilesDir().toString();
+
+                            final File imageFile = new File(location + "/subImage");
+                            try (FileOutputStream out = new FileOutputStream(imageFile)) {
+                                resized.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                                // PNG is a lossless format, the compression factor (100) is ignored
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
+                            Log.d("SAVED", imageFile.getAbsolutePath().toString());
+
+                            // Classify image
+                            FurnitureImageClassifier imageClassifier = new FurnitureImageClassifier();
+                            imageClassifier.execute(imageFile);
+
+
+
+
+                            //Log.d("CLASSIFY", WIRS.classifyImage(imageFile));
+                            //} else {
+                            //    Log.d("SERVICE", "Image service not bound");
+                            //}
                             // Use Ikea API and update recyclerview
                         }
 
@@ -224,6 +236,14 @@ public class MainActivity extends BaseCameraActivity implements ImageReader.OnIm
         }
         return true;
     }
+
+    private Handler mainHandler = new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(Message msg) {
+            //super.handleMessage(msg);
+            Log.d("MESSAGE", msg.obj.toString());
+        }
+    };
 
     @Override
     protected int getLayoutId() {
@@ -285,7 +305,6 @@ public class MainActivity extends BaseCameraActivity implements ImageReader.OnIm
         fritzVisionImage = FritzVisionImage.fromMediaImage(image, rotationFromCamera);
         image.close();
 
-
         runInBackground(
                 new Runnable() {
                     @Override
@@ -297,6 +316,8 @@ public class MainActivity extends BaseCameraActivity implements ImageReader.OnIm
                 });
     }
 
+
+    /*
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -310,4 +331,5 @@ public class MainActivity extends BaseCameraActivity implements ImageReader.OnIm
             WIRSisBound = false;
         }
     };
+    */
 }

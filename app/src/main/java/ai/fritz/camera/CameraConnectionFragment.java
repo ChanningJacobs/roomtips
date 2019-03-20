@@ -313,6 +313,9 @@ public class CameraConnectionFragment extends Fragment {
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        View options = getView().findViewById(R.id.options);
+        getChildFragmentManager().beginTransaction().replace(R.id.options, FurnitureFragment.newInstance(1)).commit();
+        options.setVisibility(View.VISIBLE);
     }
 
     @Override
