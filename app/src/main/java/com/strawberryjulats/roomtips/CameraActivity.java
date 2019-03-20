@@ -35,6 +35,7 @@ import android.os.HandlerThread;
 import android.os.Trace;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Size;
@@ -79,7 +80,6 @@ public abstract class CameraActivity extends AppCompatActivity
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(null);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         setContentView(R.layout.activity_camera);
 
         if (hasPermission()) {
@@ -89,6 +89,7 @@ public abstract class CameraActivity extends AppCompatActivity
         }
 
         bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
+        bottomSheetLayout.setVisibility(View.INVISIBLE);
         gestureLayout = findViewById(R.id.gesture_layout);
         sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
         bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow);
@@ -139,6 +140,7 @@ public abstract class CameraActivity extends AppCompatActivity
                     @Override
                     public void onSlide(@NonNull View bottomSheet, float slideOffset) {}
                 });
+
     }
 
     protected int[] getRgbBytes() {
@@ -229,6 +231,15 @@ public abstract class CameraActivity extends AppCompatActivity
         handlerThread = new HandlerThread("inference");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
+
+        View mCameraView = findViewById(R.id.texture);
+        mCameraView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     @Override
