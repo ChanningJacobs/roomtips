@@ -22,6 +22,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
@@ -43,6 +44,8 @@ import com.strawberryjulats.roomtips.tracking.MultiBoxTracker;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
@@ -213,7 +216,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 new LinkedList<Classifier.Recognition>();
 
             for (final Classifier.Recognition result : results) {
-	      if(!TARGET_LABELS.CONTAINS(result.getTitle())) continue;
+	      if(!TARGET_LABELS.contains(result.getTitle())) continue;
               final RectF location = result.getLocation();
               if (location != null && result.getConfidence() >= minimumConfidence) {
 		Path boundingBracket = getPrettyBoundingBox(location);
@@ -234,7 +237,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         });
   }
 
-  protected Path getPrettyBoundingBox(RectF boundingBox) {
+  protected static Path getPrettyBoundingBox(RectF boundingBox) {
     float left = boundingBox.left, right = boundingBox.right, top = boundingBox.top, bottom = boundingBox.bottom, topBarWidth = (right-left)/6;
 	
     Path leftBracketVertical = new Path();
@@ -265,8 +268,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     rightBracket.addPath(rightBracketVertical);
     rightBracket.addPath(rightBracketTopBar);
     rightBracket.addPath(rightBracketBottomBar);
-	
-    return leftBracket.addPath(rightBracket);
+    leftBracket.addPath(rightBracket);
+
+    return leftBracket;
     }
 
   @Override
