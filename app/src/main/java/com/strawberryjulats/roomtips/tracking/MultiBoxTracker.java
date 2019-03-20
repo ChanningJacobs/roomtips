@@ -105,6 +105,13 @@ public class MultiBoxTracker {
     return frameToCanvasMatrix;
   }
 
+  public synchronized void trackResults(
+          final List<Recognition> results, final byte[] frame, final long timestamp){
+    Log.i(TAG, "Processing " + results.size() + " results from " + timestamp);
+    processResults(timestamp, results, frame);
+  }
+
+
   public synchronized void draw(final Canvas canvas) {
     final boolean rotated = sensorOrientation % 180 == 90;
     final float multiplier =
@@ -307,12 +314,6 @@ public class MultiBoxTracker {
                   trackedRecognition.trackedObject.getCurrentCorrelation());
       trackedRecognition.trackedObject.stopTracking();
       trackedObjects.remove(trackedRecognition);
-    }
-
-    if (recogToReplace == null) {
-      Log.e(TAG, "No room to track this object, aborting.");
-      potentialObject.stopTracking();
-      return;
     }
 
     // Finally safe to say we can track this object.

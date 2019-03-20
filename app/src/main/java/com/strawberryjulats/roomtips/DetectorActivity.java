@@ -148,9 +148,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
           @Override
           public void drawCallback(final Canvas canvas) {
             tracker.draw(canvas);
-            if (isDebug()) {
-              tracker.drawDebug(canvas);
-            }
           }
         });
   }
