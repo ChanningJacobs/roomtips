@@ -46,6 +46,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Size;
@@ -69,6 +71,10 @@ import java.util.concurrent.TimeUnit;
 
 @SuppressLint("ValidFragment")
 public class CameraConnectionFragment extends Fragment {
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter recyclerAdapter;
+    private RecyclerView.LayoutManager recyclerLayoutManager;
+
     /**
      * The camera preview size will be chosen to be the smallest frame by pixel size capable of
      * containing a DESIRED_SIZE x DESIRED_SIZE square.
@@ -289,6 +295,17 @@ public class CameraConnectionFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         textureView = view.findViewById(R.id.texture);
+        recyclerView = view.findViewById(R.id.furniture_recycler);
+        // Set linear layout for recycler view
+        recyclerLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(recyclerLayoutManager);
+        // Specify an adapter
+        String[] strings = {"test1", "test2", "test3"};
+        recyclerAdapter = new FurnitureAdapter(strings);
+        recyclerView.setAdapter(recyclerAdapter);
+
+        recyclerView.invalidate();
+        recyclerAdapter.notifyDataSetChanged();
     }
 
     @Override
