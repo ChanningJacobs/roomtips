@@ -24,6 +24,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
@@ -42,6 +43,8 @@ import com.strawberryjulats.roomtips.tflite.TFLiteObjectDetectionAPIModel;
 import com.strawberryjulats.roomtips.tracking.MultiBoxTracker;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.HashSet;
@@ -219,6 +222,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 	      if(!TARGET_LABELS.contains(result.getTitle())) continue;
               final RectF location = result.getLocation();
               if (location != null && result.getConfidence() >= minimumConfidence) {
+                  canvas.drawRect(location, paint);
                 cropToFrameTransform.mapRect(location);
 
                 result.setLocation(location);
@@ -233,8 +237,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
           }
         });
   }
-
-
 
   @Override
   protected int getLayoutId() {

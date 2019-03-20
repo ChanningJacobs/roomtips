@@ -23,6 +23,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.text.TextUtils;
 import android.util.Log;
@@ -176,9 +177,10 @@ public class MultiBoxTracker {
 
       float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f;
       cornerSize = 1.0f;
-      Path boundingBracket = getPrettyBoundingBox(trackedPost);
-      canvas.drawPath(boundingBracket, boxPaint)
-      // canvas.drawRoundRect(trackedPos, cornerSize, cornerSize, boxPaint);
+      //canvas.drawRoundRect(trackedPos, cornerSize, cornerSize, boxPaint);
+
+      Path boundingBracket = getPrettyBoundingBox(trackedPos);
+      canvas.drawPath(boundingBracket, boxPaint);
 
       final String labelString =
           !TextUtils.isEmpty(recognition.title)
@@ -421,7 +423,11 @@ public class MultiBoxTracker {
 
   protected static Path getPrettyBoundingBox(RectF boundingBox) {
     float left = boundingBox.left, right = boundingBox.right, top = boundingBox.top, bottom = boundingBox.bottom, topBarWidth = (right-left)/6;
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> master
     Path leftBracketVertical = new Path();
     leftBracketVertical.moveTo(left, bottom);
     leftBracketVertical.lineTo(left, top);
@@ -431,7 +437,11 @@ public class MultiBoxTracker {
     Path leftBracketBottomBar = new Path();
     leftBracketBottomBar.moveTo(left, bottom);
     leftBracketBottomBar.lineTo(left+topBarWidth, bottom);
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> master
     Path rightBracketVertical = new Path();
     rightBracketVertical.moveTo(right, bottom);
     rightBracketVertical.lineTo(right, top);
@@ -451,7 +461,10 @@ public class MultiBoxTracker {
     rightBracket.addPath(rightBracketTopBar);
     rightBracket.addPath(rightBracketBottomBar);
     leftBracket.addPath(rightBracket);
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
     return leftBracket;
   }
 }
