@@ -22,6 +22,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.RectF;
@@ -46,6 +47,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -146,9 +148,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
           @Override
           public void drawCallback(final Canvas canvas) {
             tracker.draw(canvas);
-            if (isDebug()) {
-              tracker.drawDebug(canvas);
-            }
           }
         });
   }
@@ -221,7 +220,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
               final RectF location = result.getLocation();
               if (location != null && result.getConfidence() >= minimumConfidence) {
                   canvas.drawRect(location, paint);
-		
                 cropToFrameTransform.mapRect(location);
 
                 result.setLocation(location);
@@ -236,7 +234,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
           }
         });
   }
-
 
   @Override
   protected int getLayoutId() {

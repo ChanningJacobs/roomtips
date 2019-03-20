@@ -35,6 +35,7 @@ import android.os.HandlerThread;
 import android.os.Trace;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Size;
@@ -79,7 +80,6 @@ public abstract class CameraActivity extends AppCompatActivity
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(null);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         setContentView(R.layout.activity_camera);
 
         if (hasPermission()) {
@@ -140,6 +140,7 @@ public abstract class CameraActivity extends AppCompatActivity
                     @Override
                     public void onSlide(@NonNull View bottomSheet, float slideOffset) {}
                 });
+
     }
 
     protected int[] getRgbBytes() {
@@ -232,7 +233,6 @@ public abstract class CameraActivity extends AppCompatActivity
         handler = new Handler(handlerThread.getLooper());
 
         View mCameraView = findViewById(R.id.texture);
-
         mCameraView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
