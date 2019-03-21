@@ -142,7 +142,8 @@ public class MultiBoxTracker {
       canvas.drawPath(boundingBracket, boxPaint);
 
       final String labelString = recognition.title;
-      borderedText.drawText(canvas, (trackedPos.right-trackedPos.left)/2, (trackedPos.top-trackedPos.bottom)/2, labelString, boxPaint);
+      borderedText.drawText(canvas, (trackedPos.right + trackedPos.left) / 2.0f - (15.0f *(float)labelString.length()/2.0f), trackedPos.top, labelString, boxPaint);
+      // borderedText.drawText(canvas, (trackedPos.right-trackedPos.left)/2, (trackedPos.top-trackedPos.bottom)/2, labelString, boxPaint);
     }
   }
 
