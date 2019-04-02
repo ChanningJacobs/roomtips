@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Roomtips</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <string name="furn_desc">Description</string>
+    <string name="furn_price">Price</string>
+    <string name="furn_name">Name</string>
+    <string name="furn_img">Image</string>
 </resources>

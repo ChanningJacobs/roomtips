@@ -39,6 +39,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Size;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -46,15 +47,19 @@ import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import java.nio.ByteBuffer;
 import com.strawberryjulats.roomtips.env.ImageUtils;
+
+import io.alterac.blurkit.BlurLayout;
 
 public abstract class CameraActivity extends AppCompatActivity
         implements OnImageAvailableListener,
         CompoundButton.OnCheckedChangeListener,
         View.OnClickListener {
     private static final int PERMISSIONS_REQUEST = 1;
+    public static ProgressBar spinner;
 
     private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
     private static final String TAG = "CameraActivity";
@@ -63,7 +68,8 @@ public abstract class CameraActivity extends AppCompatActivity
     private boolean debug = false;
     private Handler handler;
     private HandlerThread handlerThread;
-    private boolean isProcessingFrame = false;
+    // changed from private to public static
+    public static boolean isProcessingFrame = false;
     private byte[][] yuvBytes = new byte[3][];
     private int[] rgbBytes = null;
     private int yRowStride;
@@ -76,6 +82,8 @@ public abstract class CameraActivity extends AppCompatActivity
 
     protected ImageView bottomSheetArrowImageView;
 
+    //private BlurLayout blurLayout;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(null);
@@ -84,6 +92,7 @@ public abstract class CameraActivity extends AppCompatActivity
 
         if (hasPermission()) {
             setFragment();
+            //blurLayout = findViewById(R.id.blurLayout);
         } else {
             requestPermission();
         }
@@ -93,6 +102,9 @@ public abstract class CameraActivity extends AppCompatActivity
         gestureLayout = findViewById(R.id.gesture_layout);
         sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
         bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow);
+
+        spinner = findViewById(R.id.progressBar);
+        spinner.setVisibility(View.GONE);
 
         ViewTreeObserver vto = gestureLayout.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(
@@ -222,6 +234,7 @@ public abstract class CameraActivity extends AppCompatActivity
     @Override
     public synchronized void onStart() {
         super.onStart();
+        //blurLayout.startBlur();
     }
 
     @Override
@@ -259,6 +272,7 @@ public abstract class CameraActivity extends AppCompatActivity
 
     @Override
     public synchronized void onStop() {
+        //blurLayout.pauseBlur();
         super.onStop();
     }
 
@@ -432,4 +446,5 @@ public abstract class CameraActivity extends AppCompatActivity
     protected abstract void setNumThreads(int numThreads);
 
     protected abstract void setUseNNAPI(boolean isChecked);
+
 }

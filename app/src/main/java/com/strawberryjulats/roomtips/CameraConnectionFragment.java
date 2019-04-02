@@ -45,18 +45,23 @@ import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.strawberryjulats.roomtips.customview.AutoFitTextureView;
@@ -71,8 +76,8 @@ import java.util.concurrent.TimeUnit;
 
 @SuppressLint("ValidFragment")
 public class CameraConnectionFragment extends Fragment {
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter recyclerAdapter;
+    public static RecyclerView recyclerView;
+    public static RecyclerView.Adapter recyclerAdapter;
     private RecyclerView.LayoutManager recyclerLayoutManager;
 
     /**
@@ -95,7 +100,7 @@ public class CameraConnectionFragment extends Fragment {
     }
 
     /** A {@link Semaphore} to prevent the app from exiting before closing the camera. */
-    private final Semaphore cameraOpenCloseLock = new Semaphore(1);
+    public static final Semaphore cameraOpenCloseLock = new Semaphore(1);
     /** A {@link OnImageAvailableListener} to receive frames as they are available. */
     private final OnImageAvailableListener imageListener;
     /** The input size in pixels desired by TensorFlow (width and height of a square bitmap). */
@@ -127,7 +132,7 @@ public class CameraConnectionFragment extends Fragment {
     /** A {@link CameraCaptureSession } for camera preview. */
     private CameraCaptureSession captureSession;
     /** A reference to the opened {@link CameraDevice}. */
-    private CameraDevice cameraDevice;
+    public static CameraDevice cameraDevice;
     /** The rotation in degrees of the camera sensor from the display. */
     private Integer sensorOrientation;
     /** The {@link Size} of camera preview. */
@@ -303,9 +308,40 @@ public class CameraConnectionFragment extends Fragment {
         String[] strings = {"test1", "test2", "test3"};
         recyclerAdapter = new FurnitureAdapter(strings);
         recyclerView.setAdapter(recyclerAdapter);
+        recyclerView.setVisibility(View.GONE);
+        SnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
+        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            float slideX1 = 0f;
+            float slideX2 = 0f;
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
+                switch(motionEvent.getActionMasked()){
+                    case MotionEvent.ACTION_DOWN:
+                        slideX1 = motionEvent.getX();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        slideX2 = motionEvent.getX();
+                        if(Math.abs(slideX2 - slideX1) > 800){
+                            CameraActivity.isProcessingFrame = false;
+                            recyclerView.setVisibility(View.GONE);
+                            openCamera(textureView.getWidth(), textureView.getHeight());
+                        }
+                        break;
+                }
+                return false;
+            }
 
-        recyclerView.invalidate();
-        recyclerAdapter.notifyDataSetChanged();
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean b) {
+
+            }
+        });
     }
 
     @Override

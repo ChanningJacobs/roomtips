@@ -28,16 +28,20 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import com.strawberryjulats.roomtips.customview.OverlayView;
 import com.strawberryjulats.roomtips.customview.OverlayView.DrawCallback;
 import com.strawberryjulats.roomtips.env.BorderedText;
 import com.strawberryjulats.roomtips.env.ImageUtils;
+import com.strawberryjulats.roomtips.ikea.IkeaAPIAccessTask;
 import com.strawberryjulats.roomtips.tflite.Classifier;
 import com.strawberryjulats.roomtips.tflite.TFLiteObjectDetectionAPIModel;
 import com.strawberryjulats.roomtips.tracking.MultiBoxTracker;
@@ -72,6 +76,15 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   OverlayView trackingOverlay;
   private Integer sensorOrientation;
 
+    //1280 by 720
+    // 2560 by 1440
+  private float touchX = 0.0f;
+  private float touchY = 0.0f;
+  private float screenShrinkFactor = 2.0f;
+
+  private float slideX1 = 0f;
+  private float slideX2 = 0f;
+
   private Classifier detector;
 
   private long lastProcessingTimeMs;
@@ -91,6 +104,30 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private byte[] luminanceCopy;
 
   private BorderedText borderedText;
+
+  @Override
+  public boolean onTouchEvent (MotionEvent event) {
+    //Log.i(TAG, v.toString());
+    //Log.i(TAG, "SCREEN_TOUCH_EVENT");
+    switch(event.getActionMasked()){
+        case MotionEvent.ACTION_UP:
+            slideX2 = event.getX();
+            if(Math.abs(slideX2 - slideX1) > 150){
+                CameraActivity.isProcessingFrame = false;
+            }
+            break;
+        case MotionEvent.ACTION_DOWN:
+            slideX1 = event.getX();
+        case MotionEvent.ACTION_MOVE:
+            // touch x and y with respect to vertical orientation
+            touchY = event.getX() / screenShrinkFactor;
+            touchX = event.getY() / screenShrinkFactor;
+            //Log.i(TAG, touchX + " " + touchY);
+            //Log.i(TAG, "Touched at (" + touchX + ", " + touchY + ")");
+            break;
+    }
+    return false;
+  }
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
@@ -172,9 +209,11 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
       return;
     }
     computingDetection = true;
-    Log.i(TAG, "Preparing image " + currTimestamp + " for detection in bg thread.");
+    //Log.i(TAG, "Preparing image " + currTimestamp + " for detection in bg thread.");
 
     rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
+
+
 
     if (luminanceCopy == null) {
       luminanceCopy = new byte[originalLuminance.length];
@@ -184,6 +223,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     final Canvas canvas = new Canvas(croppedBitmap);
     canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
+
     // For examining the actual TF input.
     if (SAVE_PREVIEW_BITMAP) {
       ImageUtils.saveBitmap(croppedBitmap);
@@ -193,7 +233,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         new Runnable() {
           @Override
           public void run() {
-            Log.i(TAG, "Running detection on image " + currTimestamp);
+            Log.d(TAG, "Running detection on image " + currTimestamp);
             final long startTime = SystemClock.uptimeMillis();
             final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
             lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
@@ -216,17 +256,42 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 new LinkedList<Classifier.Recognition>();
 
             for (final Classifier.Recognition result : results) {
+              //Log.i(TAG, "test");
 	      if(!TARGET_LABELS.contains(result.getTitle())) continue;
               final RectF location = result.getLocation();
               if (location != null && result.getConfidence() >= minimumConfidence) {
                   canvas.drawRect(location, paint);
-                cropToFrameTransform.mapRect(location);
+                  cropToFrameTransform.mapRect(location);
+                    // Touch event
+                  if(getScreenOrientation() == 0){
+                      // Vertical Screen
+                  } else if(getScreenOrientation() == 90){
+                      // change x and y to keep the same check logic
+                      float temp  = touchX;
+                      touchX = touchY;
+                      touchY = temp;
+                  } else if(getScreenOrientation() == 270){
+                      // top and bottom, right and left are flipped
+                      float temp  = touchX;
+                      touchX = 1280 - touchY;
+                      touchY = 720 - temp;
+                  }
 
-                result.setLocation(location);
-                mappedRecognitions.add(result);
+                  if(touchX >= location.left && touchX <= location.right && touchY >= location.top && touchY <= location.bottom){
+                      // IBM image classification or just use current classifier
+                      String name = result.getTitle();
+                      // ASYNC task should be called from main thread, not background thread...
+                      new IkeaAPIAccessTask().execute(name);
+                      Log.i(TAG, name);
+                  } else {
+                  }
+
+                    result.setLocation(location);
+                    mappedRecognitions.add(result);
               }
             }
-
+            touchX = 0.0f;
+            touchY = 0.0f;
             tracker.trackResults(mappedRecognitions, luminanceCopy, currTimestamp);
             trackingOverlay.postInvalidate();
 
