@@ -51,7 +51,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import java.nio.ByteBuffer;
 
+import com.ibm.watson.developer_cloud.assistant.v2.Assistant;
+import com.ibm.watson.developer_cloud.service.security.IamOptions;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.strawberryjulats.roomtips.audio.HotwordDetect;
+import com.strawberryjulats.roomtips.env.IBMServices;
 import com.strawberryjulats.roomtips.env.ImageUtils;
 
 import io.alterac.blurkit.BlurLayout;
@@ -156,9 +160,23 @@ public abstract class CameraActivity extends AppCompatActivity
                     @Override
                     public void onSlide(@NonNull View bottomSheet, float slideOffset) {}
                 });
+        createServices();
         HotwordDetect hotwordDetect = new HotwordDetect(this);
         hotwordDetect.startRecording();
         hotwordDetect.startRecognition();
+    }
+
+    private void createServices() {
+        Log.d(TAG, "Creating services");
+        IBMServices.setWatsonAssistant(new Assistant("2018-11-08",
+                new IamOptions.Builder().apiKey(getString(R.string.assistant_apikey)).build()));
+        IBMServices.getWatsonAssistant().setEndPoint(getString(R.string.assistant_url));
+
+        IBMServices.setSpeechToText(new SpeechToText());
+        IBMServices.getSpeechToText().setIamCredentials(new IamOptions.Builder().apiKey(getString(R.string.STT_apikey)).build());
+        IBMServices.getSpeechToText().setEndPoint(getString(R.string.STT_url));
+
+        Log.d(TAG, "Finished creating services");
     }
 
     protected int[] getRgbBytes() {
