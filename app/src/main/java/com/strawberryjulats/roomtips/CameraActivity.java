@@ -50,6 +50,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import java.nio.ByteBuffer;
+
+import com.strawberryjulats.roomtips.audio.HotwordDetect;
 import com.strawberryjulats.roomtips.env.ImageUtils;
 
 import io.alterac.blurkit.BlurLayout;
@@ -59,9 +61,11 @@ public abstract class CameraActivity extends AppCompatActivity
         CompoundButton.OnCheckedChangeListener,
         View.OnClickListener {
     private static final int PERMISSIONS_REQUEST = 1;
+    private static final int AUDIO_PERMISSIONS_REQUEST = 13;
     public static ProgressBar spinner;
 
     private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
+    private static final String PERMISSION_AUDIO = Manifest.permission.RECORD_AUDIO;
     private static final String TAG = "CameraActivity";
     protected int previewWidth = 0;
     protected int previewHeight = 0;
@@ -152,7 +156,9 @@ public abstract class CameraActivity extends AppCompatActivity
                     @Override
                     public void onSlide(@NonNull View bottomSheet, float slideOffset) {}
                 });
-
+        HotwordDetect hotwordDetect = new HotwordDetect(this);
+        hotwordDetect.startRecording();
+        hotwordDetect.startRecognition();
     }
 
     protected int[] getRgbBytes() {
@@ -303,7 +309,8 @@ public abstract class CameraActivity extends AppCompatActivity
 
     private boolean hasPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED;
+            Log.d(TAG, "Result of the permission audio is: " + (checkSelfPermission(PERMISSION_AUDIO) == PackageManager.PERMISSION_GRANTED));
+            return (checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED) && (checkSelfPermission(PERMISSION_AUDIO) == PackageManager.PERMISSION_GRANTED);
         } else {
             return true;
         }
@@ -318,7 +325,13 @@ public abstract class CameraActivity extends AppCompatActivity
                         Toast.LENGTH_LONG)
                         .show();
             }
-            requestPermissions(new String[] {PERMISSION_CAMERA}, PERMISSIONS_REQUEST);
+            if (checkSelfPermission(PERMISSION_CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[] {PERMISSION_CAMERA}, PERMISSIONS_REQUEST);
+            }
+            if (checkSelfPermission(PERMISSION_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Requesting Audio Permission");
+                requestPermissions(new String[] {PERMISSION_AUDIO}, AUDIO_PERMISSIONS_REQUEST);
+            }
         }
     }
 
