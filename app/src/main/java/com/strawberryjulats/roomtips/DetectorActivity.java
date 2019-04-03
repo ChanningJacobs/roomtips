@@ -281,8 +281,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                       // IBM image classification or just use current classifier
                       String name = result.getTitle();
                       // ASYNC task should be called from main thread, not background thread...
-                      new IkeaAPIAccessTask().execute(name);
+                      new IkeaAPIAccessTask(findViewById(R.id.frame)).execute(name);
                       Log.i(TAG, name);
+                      break;
                   } else {
                   }
 

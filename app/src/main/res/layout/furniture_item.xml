@@ -12,16 +12,16 @@
         android:layout_weight="1">
 
         <ImageView
-            android:layout_marginTop="50dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
             android:id="@+id/furn_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="25dp"
             android:layout_weight="1"
             android:background="@color/colorPrimary"
             android:contentDescription="@string/furn_img"
-            android:scaleType="fitXY"
+            android:scaleType="center"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
@@ -40,24 +40,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/furn_price"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/furn_price"
-            android:textAlignment="center"
+            android:textAlignment="viewStart"
             android:textColor="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/furn_desc"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/furn_desc"
-            android:textAlignment="center"
+            android:textAlignment="viewStart"
             android:textColor="@color/colorPrimary" />
     </LinearLayout>
 

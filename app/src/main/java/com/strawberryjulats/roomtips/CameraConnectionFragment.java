@@ -322,10 +322,11 @@ public class CameraConnectionFragment extends Fragment {
                         break;
                     case MotionEvent.ACTION_UP:
                         slideX2 = motionEvent.getX();
-                        if(Math.abs(slideX2 - slideX1) > 800){
+                        if(Math.abs(slideX2 - slideX1) > 700){
                             CameraActivity.isProcessingFrame = false;
                             recyclerView.setVisibility(View.GONE);
                             openCamera(textureView.getWidth(), textureView.getHeight());
+                            getView().findViewById(R.id.imageView).setVisibility(View.GONE);
                         }
                         break;
                 }
@@ -347,6 +348,7 @@ public class CameraConnectionFragment extends Fragment {
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
     }
 
     @Override
@@ -358,9 +360,9 @@ public class CameraConnectionFragment extends Fragment {
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
         // a camera and start preview from here (otherwise, we wait until the surface is ready in
         // the SurfaceTextureListener).
-        if (textureView.isAvailable()) {
+        if (textureView.isAvailable() && recyclerView.getVisibility() != View.VISIBLE) {
             openCamera(textureView.getWidth(), textureView.getHeight());
-        } else {
+        } else if(!textureView.isAvailable()){
             textureView.setSurfaceTextureListener(surfaceTextureListener);
         }
     }
