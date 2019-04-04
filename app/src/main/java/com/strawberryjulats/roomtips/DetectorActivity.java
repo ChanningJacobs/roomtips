@@ -105,7 +105,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   private BorderedText borderedText;
 
+
   public static String queryWords = null;
+
 
   @Override
   public boolean onTouchEvent (MotionEvent event) {
