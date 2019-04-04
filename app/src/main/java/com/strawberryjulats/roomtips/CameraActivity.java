@@ -229,7 +229,8 @@ public abstract class CameraActivity extends AppCompatActivity
     @Override
     public synchronized void onStart() {
         super.onStart();
-        //isProcessingFrame = false;
+        // Recyclerview was open and screen was rotated
+        isProcessingFrame = false;
     }
 
     @Override

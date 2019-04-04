@@ -1,9 +1,13 @@
 package com.strawberryjulats.roomtips.ikea;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Camera;
 import android.os.AsyncTask;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
@@ -51,15 +55,25 @@ public class IkeaAPIAccessTask extends AsyncTask<String, Void, ArrayList<Product
         Log.d("OUR PRODUCTS", "" + FurnitureAdapter.products);
         // Remove spinning loading symbol
         CameraActivity.spinner.setVisibility(View.INVISIBLE);
-        CameraConnectionFragment.recyclerView.setVisibility(View.VISIBLE);
         // 2560 by 1440
-        ObjectAnimator animation = ObjectAnimator.ofFloat(CameraConnectionFragment.recyclerView, "translationX", 1440f);
-        animation.setDuration(2000);
-        animation.start();
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+
+        Log.i("COOL",Integer.toString(height));
+        Log.i("COOL",Integer.toString(width));
+
+        CameraConnectionFragment.recyclerView.animate().translationXBy(1440f).setDuration(1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                CameraConnectionFragment.recyclerView.setVisibility(View.VISIBLE);
+                CameraConnectionFragment.recyclerView.animate().translationXBy(-1440f).setDuration(2000).setListener(null);
+            }
+        });
         CameraConnectionFragment.recyclerAdapter.notifyDataSetChanged();
-        ObjectAnimator animation2 = ObjectAnimator.ofFloat(CameraConnectionFragment.recyclerView, "translationX", -1440f);
-        animation2.setDuration(2000);
-        animation2.start();
         CameraActivity.isProcessingFrame = true;
         while(!CameraConnectionFragment.cameraOpenCloseLock.tryAcquire()){}
         CameraConnectionFragment.cameraDevice.close();
@@ -69,6 +83,9 @@ public class IkeaAPIAccessTask extends AsyncTask<String, Void, ArrayList<Product
         if(image == null){
             Log.d(TAG, "NULL IMAGE");
         }
-        Blurry.with(context).radius(10).from(image.getBitmap()).into(root.findViewById(R.id.imageView));
+        // Check for rotated image
+        // TODO
+        Blurry.with(context).radius(50).animate(2000).from(image.getBitmap()).into(root.findViewById(R.id.imageView));
+
     }
 }

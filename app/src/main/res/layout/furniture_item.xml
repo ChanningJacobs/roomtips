@@ -6,59 +6,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-
-        <ImageView
-            android:id="@+id/furn_img"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="25dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginRight="25dp"
-            android:layout_weight="1"
-            android:background="@color/colorPrimary"
-            android:contentDescription="@string/furn_img"
-            android:scaleType="center"
-            tools:srcCompat="@tools:sample/avatars" />
-
-        <TextView
-            android:id="@+id/furn_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_weight="1"
-            android:text="@string/furn_name"
-            android:textAlignment="center"
-            android:textColor="@color/colorAccent"
-            android:textSize="36sp" />
-    </FrameLayout>
-
-    <LinearLayout
+    <TextView
+        android:id="@+id/furn_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:text="@string/furn_name"
+        android:textAlignment="center"
+        android:gravity="bottom"
+        android:textColor="@color/colorAccent"
+        android:textSize="36sp" />
 
-        <TextView
-            android:id="@+id/furn_price"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/furn_price"
-            android:textAlignment="viewStart"
-            android:textColor="@color/colorPrimary" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.75">
 
-        <TextView
-            android:id="@+id/furn_desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/furn_desc"
-            android:textAlignment="viewStart"
-            android:textColor="@color/colorPrimary" />
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/furn_img"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/furn_img"
+            android:scaleType="center"
+            tools:srcCompat="@tools:sample/avatars" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/furn_price"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/furn_price"
+        android:textAlignment="center"
+        android:textColor="@color/colorAccent"
+        android:textSize="36sp" />
 
 </LinearLayout>

@@ -17,12 +17,12 @@ fun getProduct(productInfo: JSONObject): Product {
     val name: String = productInfo.getString("name")
     val price: Double = productInfo.getDouble("price")
     val imgUrl: String = productInfo.getJSONArray("images").getString(0)
-    val productUrl: String = productInfo.getString("url")
+    val link: String = productInfo.getString("url")
     val debugTag = "getProduct"
     Log.d(debugTag, "product name: $name")
     Log.d(debugTag, "product price: $price")
     Log.d(debugTag, "img url: $imgUrl")
-    return Product(name,price, imgUrl, productUrl);
+    return Product(name,price, imgUrl, link)
 }
 
 /**
