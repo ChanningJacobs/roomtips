@@ -5,4 +5,5 @@
     <string name="furn_price">Price</string>
     <string name="furn_name">Name</string>
     <string name="furn_img">Image</string>
+    <string name="speech_prompt">How can I assist you?</string>
 </resources>

@@ -44,6 +44,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -51,7 +52,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import java.nio.ByteBuffer;
 
+import com.ibm.watson.developer_cloud.assistant.v2.Assistant;
+import com.ibm.watson.developer_cloud.service.security.IamOptions;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
 import com.strawberryjulats.roomtips.audio.HotwordDetect;
+import com.strawberryjulats.roomtips.env.IBMServices;
 import com.strawberryjulats.roomtips.env.ImageUtils;
 
 import io.alterac.blurkit.BlurLayout;
@@ -85,6 +91,7 @@ public abstract class CameraActivity extends AppCompatActivity
     private BottomSheetBehavior sheetBehavior;
 
     protected ImageView bottomSheetArrowImageView;
+    public HotwordDetect hotwordDetect;
 
     //private BlurLayout blurLayout;
 
@@ -100,6 +107,7 @@ public abstract class CameraActivity extends AppCompatActivity
         } else {
             requestPermission();
         }
+        createServices();
 
         bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
         bottomSheetLayout.setVisibility(View.INVISIBLE);
@@ -156,9 +164,40 @@ public abstract class CameraActivity extends AppCompatActivity
                     @Override
                     public void onSlide(@NonNull View bottomSheet, float slideOffset) {}
                 });
-        HotwordDetect hotwordDetect = new HotwordDetect(this);
+        hotwordDetect = new HotwordDetect(this);
+        hotswitch();
+    }
+
+    public void hotswitch() {
+        Log.d(TAG, "SWITCHING");
         hotwordDetect.startRecording();
+        Log.d(TAG, "SWITCHING 2");
         hotwordDetect.startRecognition();
+    }
+
+    public void recordOn() {
+        if (hotwordDetect != null) {
+            hotwordDetect.recordOn();
+        }
+    }
+
+    private void createServices() {
+        Log.d(TAG, "Creating services");
+        IBMServices.setWatsonAssistant(new Assistant("2018-11-08",
+                new IamOptions.Builder().apiKey(getString(R.string.assistant_apikey)).build()));
+        IBMServices.getWatsonAssistant().setEndPoint(getString(R.string.assistant_url));
+
+
+        IBMServices.setTextToSpeech(new TextToSpeech());
+        IBMServices.getTextToSpeech().setIamCredentials(new IamOptions.Builder().apiKey(getString(R.string.TTS_apikey)).build());
+        IBMServices.getTextToSpeech().setEndPoint(getString(R.string.TTS_url));
+
+
+        IBMServices.setSpeechToText(new SpeechToText());
+        IBMServices.getSpeechToText().setIamCredentials(new IamOptions.Builder().apiKey(getString(R.string.STT_apikey)).build());
+        IBMServices.getSpeechToText().setEndPoint(getString(R.string.STT_url));
+
+        Log.d(TAG, "Finished creating services");
     }
 
     protected int[] getRgbBytes() {

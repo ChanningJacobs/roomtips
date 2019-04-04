@@ -1,5 +1,6 @@
 package com.strawberryjulats.roomtips.audio;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -8,7 +9,10 @@ import android.os.Process;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.speech.SpeechRecognizer;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import com.strawberryjulats.roomtips.CameraActivity;
 
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
@@ -50,15 +54,15 @@ public class HotwordDetect {
     private List<String> displayedLabels = new ArrayList<>();
     private TensorFlowInferenceInterface inferenceInterface;
     private RecognizeCommands recognizeCommands;
-    private Context context;
-    private SpeechRecognizer speechRecognizer;
+    private CameraActivity activity;
+    private RecordAudio recordAudio;
 
-    public HotwordDetect(Context c) {
-        context = c;
+    public HotwordDetect(CameraActivity a) {
+        activity = a;
         String actualLabelFilename = LABEL_FILENAME.split("file:///android_asset/", -1)[1];
         BufferedReader br;
         try {
-            br = new BufferedReader(new InputStreamReader(context.getAssets().open(actualLabelFilename)));
+            br = new BufferedReader(new InputStreamReader(activity.getApplicationContext().getAssets().open(actualLabelFilename)));
             String line;
             while ((line = br.readLine()) != null) {
                 labels.add(line);
@@ -82,7 +86,7 @@ public class HotwordDetect {
                         MINIMUM_TIME_BETWEEN_SAMPLES_MS);
 
         try {
-            inferenceInterface = new TensorFlowInferenceInterface(context.getAssets(), MODEL_FILENAME);
+            inferenceInterface = new TensorFlowInferenceInterface(activity.getApplicationContext().getAssets(), MODEL_FILENAME);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -94,6 +98,7 @@ public class HotwordDetect {
             Log.d(TAG, "Recording Thread not null, return");
             return;
         }
+        recordAudio = new RecordAudio(activity);
         isRecording = true;
         recordingThread = new Thread(new Runnable() {
             @Override
@@ -229,8 +234,11 @@ public class HotwordDetect {
                         break;
                     case 2:
                         Log.d(TAG, "Visual Found");
-                        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                        Vibrator v = (Vibrator) activity.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                         v.vibrate(VibrationEffect.createOneShot(200, 200));
+                        stopRecording();
+                        stopRecognition();
+                        recordAudio.setRecord();
                         break;
                 }
                 Log.d(TAG, "Score: " + result.score);
@@ -242,6 +250,12 @@ public class HotwordDetect {
             } catch (InterruptedException e) {
                 // Ignore
             }
+        }
+    }
+
+    public void recordOn() {
+        if (recordAudio != null) {
+            recordAudio.record();
         }
     }
 }
