@@ -5,6 +5,7 @@
     android:id="@+id/top_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".TutorialActivity">
 
     <TextView
@@ -43,12 +44,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="62dp"
         android:background="@color/white"
+        android:stateListAnimator="@null"
         android:text="@string/talkToVisual"
         android:textColor="@color/subtitle"
         android:textSize="@dimen/subtitle"
         android:textStyle="bold"
         android:visibility="invisible"
-        android:stateListAnimator="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
