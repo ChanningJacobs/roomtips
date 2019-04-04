@@ -238,7 +238,7 @@ public class HotwordDetect {
                         v.vibrate(VibrationEffect.createOneShot(200, 200));
                         stopRecording();
                         stopRecognition();
-                        recordAudio.setRecord();
+                        //recordAudio.setRecord();
                         break;
                 }
                 Log.d(TAG, "Score: " + result.score);

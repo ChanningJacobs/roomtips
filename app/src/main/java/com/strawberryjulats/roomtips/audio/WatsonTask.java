@@ -12,6 +12,7 @@ import com.ibm.watson.developer_cloud.assistant.v2.model.MessageOptions;
 import com.ibm.watson.developer_cloud.assistant.v2.model.MessageResponse;
 import com.ibm.watson.developer_cloud.assistant.v2.model.RuntimeEntity;
 import com.strawberryjulats.roomtips.CameraActivity;
+import com.strawberryjulats.roomtips.CameraConnectionFragment;
 import com.strawberryjulats.roomtips.DetectorActivity;
 import com.strawberryjulats.roomtips.R;
 import com.strawberryjulats.roomtips.env.IBMServices;
@@ -33,7 +34,7 @@ public class WatsonTask extends AsyncTask<String, Void, MessageResponse> {
             /*
                 Take text from parameters and send into service as a message
              */
-        String textToSend = params[0];
+        String textToSend = params[0].replace("$", "");
         Log.d(TAG, "Sending text: " + textToSend);
 
         if (IBMServices.getSessionResponse() == null) {
@@ -58,7 +59,8 @@ public class WatsonTask extends AsyncTask<String, Void, MessageResponse> {
         super.onPostExecute(response);
         String text = "";
         String action = "";
-        String[] params = new String[0];
+        String[] params = new String[2];
+        int count = 0;
         if (response.getOutput() != null) {
             if (!response.getOutput().getGeneric().isEmpty() &&
                     response.getOutput().getGeneric().get(0).getResponseType().equals("text")) {
@@ -69,7 +71,9 @@ public class WatsonTask extends AsyncTask<String, Void, MessageResponse> {
             }
             if (response.getOutput().getEntities() != null && !response.getOutput().getEntities().isEmpty()) {
                 for(RuntimeEntity rt : response.getOutput().getEntities()) {
-                    Log.d(TAG, "FOUND: " + rt.getValue());
+                    if(Character.isDigit(rt.getValue().charAt(0)) && count < 2) {
+                        params[count++] = rt.getValue();
+                    }
                 }
             }
         }
@@ -78,7 +82,6 @@ public class WatsonTask extends AsyncTask<String, Void, MessageResponse> {
 
         runAction(action, params);
         Log.d(TAG, "SWITCHING");
-        activity.get().hotswitch();
         new TextToSpeechTask(activity.get()).execute(text);
     }
 
@@ -107,6 +110,8 @@ public class WatsonTask extends AsyncTask<String, Void, MessageResponse> {
                 }
                 break;
         }
-        new IkeaAPIAccessTask(activity.get().findViewById(R.id.frame)).execute(DetectorActivity.queryWords, upper, lower);
+        Log.d("TESTTEST", "PASSING IN MIN: " + lower + " AND MAX: " + upper);
+        new IkeaAPIAccessTask(activity.get().findViewById(R.id.frame)).execute(DetectorActivity.queryWords, lower, upper);
+        CameraConnectionFragment.recyclerAdapter.notifyDataSetChanged();
     }
 }

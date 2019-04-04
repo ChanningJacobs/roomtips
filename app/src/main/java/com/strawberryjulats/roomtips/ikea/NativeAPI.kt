@@ -58,7 +58,7 @@ fun getAPIResponse(product: String, numOfProducts: Int? = null, minPrice: Int? =
         queryUrl += "&min_price=${minPrice}"
     }
     if (maxPrice != null) {
-        queryUrl += "&max_price'${maxPrice}"
+        queryUrl += "&max_price${maxPrice}"
     }
     Log.d("DEMOSPRINT3", "hitting endpoint: ${queryUrl}")
 

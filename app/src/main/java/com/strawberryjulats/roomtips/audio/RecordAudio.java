@@ -40,12 +40,6 @@ public class RecordAudio {
         recording = false;
     }
 
-    public void setRecord() {
-        FragmentManager fm = activity.getSupportFragmentManager();
-        DialogFragment dialog = new SpeechDialogFragment();
-        dialog.show(fm, "speech sheet");
-    }
-
     public void record() {
         if (!recording) {
             Log.d(TAG, "Recording");

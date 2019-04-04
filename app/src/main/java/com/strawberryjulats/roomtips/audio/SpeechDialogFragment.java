@@ -24,12 +24,12 @@ public class SpeechDialogFragment extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.speech_bottom_sheet, container, false);
         CameraActivity cm = (CameraActivity)getActivity();
         Button button = view.findViewById(R.id.speech_dismiss);
-        cm.recordOn();
+        //cm.recordOn();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "Trying to switch");
-                cm.recordOn();
+                //cm.recordOn();
                 dismiss();
             }
         });

@@ -33,6 +33,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.view.ViewPager;
@@ -57,6 +59,7 @@ import com.ibm.watson.developer_cloud.service.security.IamOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
 import com.strawberryjulats.roomtips.audio.HotwordDetect;
+import com.strawberryjulats.roomtips.audio.RecordAudio;
 import com.strawberryjulats.roomtips.env.IBMServices;
 import com.strawberryjulats.roomtips.env.ImageUtils;
 
@@ -90,6 +93,7 @@ public abstract class CameraActivity extends AppCompatActivity
 
     protected ImageView bottomSheetArrowImageView;
     public HotwordDetect hotwordDetect;
+    private RecordAudio recordAudio;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -103,7 +107,16 @@ public abstract class CameraActivity extends AppCompatActivity
             requestPermission();
         }
         createServices();
-
+        recordAudio = new RecordAudio(this);
+        Button test = findViewById(R.id.test);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Vibrator vibrate = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                vibrate.vibrate(VibrationEffect.createOneShot(200, 200));
+                recordAudio.record();
+            }
+        });
         bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
         bottomSheetLayout.setVisibility(View.INVISIBLE);
         gestureLayout = findViewById(R.id.gesture_layout);
@@ -159,22 +172,8 @@ public abstract class CameraActivity extends AppCompatActivity
                     @Override
                     public void onSlide(@NonNull View bottomSheet, float slideOffset) {}
                 });
-        hotwordDetect = new HotwordDetect(this);
-        hotswitch();
     }
 
-    public void hotswitch() {
-        Log.d(TAG, "SWITCHING");
-        hotwordDetect.startRecording();
-        Log.d(TAG, "SWITCHING 2");
-        hotwordDetect.startRecognition();
-    }
-
-    public void recordOn() {
-        if (hotwordDetect != null) {
-            hotwordDetect.recordOn();
-        }
-    }
 
     private void createServices() {
         Log.d(TAG, "Creating services");
