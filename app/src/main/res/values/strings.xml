@@ -6,4 +6,7 @@
     <string name="furn_name">Name</string>
     <string name="furn_img">Image</string>
     <string name="blur_image">Blurred Image</string>
+    <string name="app_title">roomtips</string>
+    <string name="view_tutorial_prompt">take a quick tutorial</string>
+    <string name="skip_tutorial_prompt">skip</string>
 </resources>
