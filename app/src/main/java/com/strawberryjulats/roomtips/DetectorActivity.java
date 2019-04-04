@@ -105,6 +105,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   private BorderedText borderedText;
 
+  public static String queryWords = null;
+
   @Override
   public boolean onTouchEvent (MotionEvent event) {
     //Log.i(TAG, v.toString());
@@ -280,9 +282,12 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                   if(touchX >= location.left && touchX <= location.right && touchY >= location.top && touchY <= location.bottom){
                       // IBM image classification or just use current classifier
                       String name = result.getTitle();
+                      queryWords = name;
+                      /** edit here to add in minPrice and maxPrice, as well as altering the color **/
                       // ASYNC task should be called from main thread, not background thread...
-                      new IkeaAPIAccessTask().execute(name);
+                      new IkeaAPIAccessTask(findViewById(R.id.frame)).execute(queryWords);
                       Log.i(TAG, name);
+                      break;
                   } else {
                   }
 

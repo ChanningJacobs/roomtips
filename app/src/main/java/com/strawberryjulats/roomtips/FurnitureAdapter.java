@@ -1,6 +1,9 @@
 package com.strawberryjulats.roomtips;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,15 +30,17 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
         public View furn_item;
         public TextView furn_name;
         public TextView furn_price;
-        public TextView furn_desc;
+        //public TextView furn_desc;
         public ImageView furn_img;
+        public String furn_link;
         public FurnitureViewHolder(View v) {
             super(v);
             furn_item = v;
             furn_name = furn_item.findViewById(R.id.furn_name);
             furn_price = furn_item.findViewById(R.id.furn_price);
-            furn_desc = furn_item.findViewById(R.id.furn_desc);
+            //furn_desc = furn_item.findViewById(R.id.furn_desc);
             furn_img = furn_item.findViewById(R.id.furn_img);
+            furn_link = "http://www.google.com";
 
             Log.i("Adapter", "view holder reached");
         }
@@ -63,9 +68,18 @@ public class FurnitureAdapter extends RecyclerView.Adapter<FurnitureAdapter.Furn
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.furn_name.setText(products.get(position).getName());
-        holder.furn_price.setText(Double.toString(products.get(position).getPrice()));
-        holder.furn_desc.setText("Description.");
+        holder.furn_price.setText("$" + Double.toString(products.get(position).getPrice()));
+        //holder.furn_desc.setText("Description.");
         Glide.with(parentContext).load(products.get(position).getImgUrl()).into(holder.furn_img);
+        holder.furn_link = products.get(position).getLink();
+
+        holder.furn_img.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(holder.furn_link));
+                parentContext.startActivity(browserIntent);
+            }
+        });
 
         Log.i("Adapter", "bind reached");
 

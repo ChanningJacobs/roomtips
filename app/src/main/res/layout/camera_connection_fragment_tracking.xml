@@ -14,7 +14,9 @@
  limitations under the License.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -28,11 +30,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/blur_image"
+        android:scaleType="fitXY"
+        android:src="@mipmap/ic_launcher"
+        android:visibility="gone" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/furniture_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="end"
         android:background="@color/gray"
-        android:scrollbars="vertical"
-        android:scrollbarThumbVertical="@drawable/custom_scrollbar" />
+        android:scrollbarThumbVertical="@drawable/custom_scrollbar"
+        android:scrollbars="vertical">
+
+    </android.support.v7.widget.RecyclerView>
 </FrameLayout>

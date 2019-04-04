@@ -60,8 +60,6 @@ import com.strawberryjulats.roomtips.audio.HotwordDetect;
 import com.strawberryjulats.roomtips.env.IBMServices;
 import com.strawberryjulats.roomtips.env.ImageUtils;
 
-import io.alterac.blurkit.BlurLayout;
-
 public abstract class CameraActivity extends AppCompatActivity
         implements OnImageAvailableListener,
         CompoundButton.OnCheckedChangeListener,
@@ -93,8 +91,6 @@ public abstract class CameraActivity extends AppCompatActivity
     protected ImageView bottomSheetArrowImageView;
     public HotwordDetect hotwordDetect;
 
-    //private BlurLayout blurLayout;
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(null);
@@ -103,7 +99,6 @@ public abstract class CameraActivity extends AppCompatActivity
 
         if (hasPermission()) {
             setFragment();
-            //blurLayout = findViewById(R.id.blurLayout);
         } else {
             requestPermission();
         }
@@ -279,7 +274,8 @@ public abstract class CameraActivity extends AppCompatActivity
     @Override
     public synchronized void onStart() {
         super.onStart();
-        //blurLayout.startBlur();
+        // Recyclerview was open and screen was rotated
+        isProcessingFrame = false;
     }
 
     @Override
@@ -290,14 +286,19 @@ public abstract class CameraActivity extends AppCompatActivity
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
 
-        View mCameraView = findViewById(R.id.texture);
-        mCameraView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        if(findViewById(R.id.furniture_recycler) != null){
+            if(findViewById(R.id.furniture_recycler).getVisibility() == View.VISIBLE){
+                isProcessingFrame = true;
+            }
+        }
+
+         findViewById(R.id.top_layout).setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     @Override
@@ -317,7 +318,6 @@ public abstract class CameraActivity extends AppCompatActivity
 
     @Override
     public synchronized void onStop() {
-        //blurLayout.pauseBlur();
         super.onStop();
     }
 
@@ -336,9 +336,7 @@ public abstract class CameraActivity extends AppCompatActivity
     public void onRequestPermissionsResult(
             final int requestCode, final String[] permissions, final int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 setFragment();
             } else {
                 requestPermission();

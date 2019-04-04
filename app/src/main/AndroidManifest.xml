@@ -16,8 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FurnitureQuery"></activity>
-        <activity android:name=".DetectorActivity">
+        <activity android:name=".DetectorActivity"></activity>
+        <activity android:name=".TutorialActivity" />
+        <activity android:name=".FurnitureQuery" />
+        <activity android:name=".LandingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

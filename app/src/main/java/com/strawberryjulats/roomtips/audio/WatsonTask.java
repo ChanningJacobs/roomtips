@@ -12,8 +12,10 @@ import com.ibm.watson.developer_cloud.assistant.v2.model.MessageOptions;
 import com.ibm.watson.developer_cloud.assistant.v2.model.MessageResponse;
 import com.ibm.watson.developer_cloud.assistant.v2.model.RuntimeEntity;
 import com.strawberryjulats.roomtips.CameraActivity;
+import com.strawberryjulats.roomtips.DetectorActivity;
 import com.strawberryjulats.roomtips.R;
 import com.strawberryjulats.roomtips.env.IBMServices;
+import com.strawberryjulats.roomtips.ikea.IkeaAPIAccessTask;
 
 import java.lang.ref.WeakReference;
 import java.util.Locale;
@@ -81,20 +83,30 @@ public class WatsonTask extends AsyncTask<String, Void, MessageResponse> {
     }
 
     private void runAction(String action, String[] params) {
+        if (action.isEmpty() || DetectorActivity.queryWords == null) {
+            return;
+        }
+        String lower = "0";
+        String upper = "9999";
         switch (action) {
             case "priceAbove":
-
+                lower = params[0];
                 break;
             case "priceBelow":
-
+                upper = params[0];
                 break;
             case "priceBetween":
-
+                if (params.length > 1) {
+                    if (Integer.parseInt(params[0]) < Integer.parseInt(params[1])) {
+                        lower = params[0];
+                        upper = params[1];
+                    } else {
+                        lower = params[1];
+                        upper = params[0];
+                    }
+                }
                 break;
-            case "colorChange":
-
-                break;
-
         }
+        new IkeaAPIAccessTask(activity.get().findViewById(R.id.frame)).execute(DetectorActivity.queryWords, upper, lower);
     }
 }
