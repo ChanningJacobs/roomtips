@@ -17,11 +17,12 @@ fun getProduct(productInfo: JSONObject): Product {
     val name: String = productInfo.getString("name")
     val price: Double = productInfo.getDouble("price")
     val imgUrl: String = productInfo.getJSONArray("images").getString(0)
+    val productUrl: String = productInfo.getString("url")
     val debugTag = "getProduct"
     Log.d(debugTag, "product name: $name")
     Log.d(debugTag, "product price: $price")
     Log.d(debugTag, "img url: $imgUrl")
-    return Product(name,price, imgUrl)
+    return Product(name,price, imgUrl, productUrl);
 }
 
 /**
@@ -53,6 +54,12 @@ fun getProducts(jsonString: String): ArrayList<Product> {
 fun getAPIResponse(product: String, numOfProducts: Int? = null, minPrice: Int? = null, maxPrice: Int? = null, sort: Boolean = false, imgSize: Int = 2): String {
     Log.d("APICALL", product)
     var queryUrl: String = API_QUERY_URL + "tag=${product.replace(' ', '+')}"
+    if (minPrice != null) {
+        queryUrl += "&min_price=${minPrice}"
+    }
+    if (maxPrice != null) {
+        queryUrl += "&max_price'${maxPrice}"
+    }
     Log.d("DEMOSPRINT3", "hitting endpoint: ${queryUrl}")
 
     return URL(queryUrl).readText()

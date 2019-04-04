@@ -13,8 +13,4 @@ public class TutorialActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tutorial);
     }
 
-    public void fakeMethod(View v) {
-        Intent intent = new Intent(this, DetectorActivity.class);
-        startActivity(intent);
-    }
 }

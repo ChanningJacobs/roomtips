@@ -35,6 +35,9 @@ public class LandingActivity extends AppCompatActivity {
 
         if(isNewUser()) {
             startTutorialAnimation();
+        } else {
+            Handler handler = new Handler();
+            handler.postDelayed(this::goToMainApp, 2500);
         }
 
     }
@@ -59,6 +62,10 @@ public class LandingActivity extends AppCompatActivity {
 
     public void skipTutorial(View v) {
         disableNewUserStatus();
+        goToMainApp();
+    }
+
+    private void goToMainApp() {
         Intent intent = new Intent(this, DetectorActivity.class);
         startActivity(intent);
     }
