@@ -5,6 +5,7 @@
     <string name="furn_price">Price</string>
     <string name="furn_name">Name</string>
     <string name="furn_img">Image</string>
+    <string name="speech_prompt">How can I assist you?</string>
     <string name="blur_image">Blurred Image</string>
     <string name="app_title">roomtips</string>
     <string name="view_tutorial_prompt">take a quick tutorial</string>

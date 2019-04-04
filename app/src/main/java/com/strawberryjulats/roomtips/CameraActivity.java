@@ -34,6 +34,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
@@ -46,12 +48,21 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import java.nio.ByteBuffer;
+
+import com.ibm.watson.developer_cloud.assistant.v2.Assistant;
+import com.ibm.watson.developer_cloud.service.security.IamOptions;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
+import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech;
+import com.strawberryjulats.roomtips.audio.HotwordDetect;
+import com.strawberryjulats.roomtips.audio.RecordAudio;
+import com.strawberryjulats.roomtips.env.IBMServices;
 import com.strawberryjulats.roomtips.env.ImageUtils;
 
 public abstract class CameraActivity extends AppCompatActivity
@@ -75,11 +86,28 @@ public abstract class CameraActivity extends AppCompatActivity
     private Runnable postInferenceCallback;
     private Runnable imageConverter;
 
+
+    protected ImageView bottomSheetArrowImageView;
+    public HotwordDetect hotwordDetect;
+    private RecordAudio recordAudio;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(null);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_camera);
+
+        createServices();
+        recordAudio = new RecordAudio(this);
+        Button test = findViewById(R.id.test);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Vibrator vibrate = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                vibrate.vibrate(VibrationEffect.createOneShot(200, 200));
+                recordAudio.record();
+            }
+        });
 
 
         setFragment();
@@ -88,6 +116,28 @@ public abstract class CameraActivity extends AppCompatActivity
 
         spinner = findViewById(R.id.progressBar);
         spinner.setVisibility(View.GONE);
+
+    }
+
+
+    private void createServices() {
+        Log.d(TAG, "Creating services");
+        IBMServices.setWatsonAssistant(new Assistant("2018-11-08",
+                new IamOptions.Builder().apiKey(getString(R.string.assistant_apikey)).build()));
+        IBMServices.getWatsonAssistant().setEndPoint(getString(R.string.assistant_url));
+
+
+        IBMServices.setTextToSpeech(new TextToSpeech());
+        IBMServices.getTextToSpeech().setIamCredentials(new IamOptions.Builder().apiKey(getString(R.string.TTS_apikey)).build());
+        IBMServices.getTextToSpeech().setEndPoint(getString(R.string.TTS_url));
+
+
+        IBMServices.setSpeechToText(new SpeechToText());
+        IBMServices.getSpeechToText().setIamCredentials(new IamOptions.Builder().apiKey(getString(R.string.STT_apikey)).build());
+        IBMServices.getSpeechToText().setEndPoint(getString(R.string.STT_url));
+
+        Log.d(TAG, "Finished creating services");
+
     }
 
     protected int[] getRgbBytes() {
@@ -240,6 +290,18 @@ public abstract class CameraActivity extends AppCompatActivity
         }
     }
 
+<<<<<<< HEAD
+=======
+    private boolean hasPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Log.d(TAG, "Result of the permission audio is: " + (checkSelfPermission(PERMISSION_AUDIO) == PackageManager.PERMISSION_GRANTED));
+            return (checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED) && (checkSelfPermission(PERMISSION_AUDIO) == PackageManager.PERMISSION_GRANTED);
+        } else {
+            return true;
+        }
+    }
+
+>>>>>>> 94ce3da1eb2d31c22d458a06b9fdae0f61ab15cd
     private void requestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA)) {
@@ -249,6 +311,7 @@ public abstract class CameraActivity extends AppCompatActivity
                         Toast.LENGTH_LONG)
                         .show();
             }
+<<<<<<< HEAD
             if(shouldShowRequestPermissionRationale(PERMISSION_AUDIO)){
                 Toast.makeText(
                         CameraActivity.this,
@@ -257,6 +320,15 @@ public abstract class CameraActivity extends AppCompatActivity
                         .show();
             }
             requestPermissions(new String[] {PERMISSION_CAMERA, PERMISSION_AUDIO}, PERMISSIONS_REQUEST);
+=======
+            if (checkSelfPermission(PERMISSION_CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[] {PERMISSION_CAMERA}, PERMISSIONS_REQUEST);
+            }
+            if (checkSelfPermission(PERMISSION_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Requesting Audio Permission");
+                requestPermissions(new String[] {PERMISSION_AUDIO}, AUDIO_PERMISSIONS_REQUEST);
+            }
+>>>>>>> 94ce3da1eb2d31c22d458a06b9fdae0f61ab15cd
         }
     }
     */

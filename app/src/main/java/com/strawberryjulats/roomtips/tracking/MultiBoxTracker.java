@@ -141,14 +141,16 @@ public class MultiBoxTracker {
       Path boundingBracket = getPrettyBoundingBox(trackedPos);
       canvas.drawPath(boundingBracket, boxPaint);
 
-      final String labelString =
-          !TextUtils.isEmpty(recognition.title)
-              ? String.format("%s %.2f", recognition.title, (100 * recognition.detectionConfidence))
-              : String.format("%.2f", (100 * recognition.detectionConfidence));
-      //            borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top,
-      // labelString);
-      borderedText.drawText(
-          canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
+      final String labelString = recognition.title;
+      borderedText.drawText(canvas, (trackedPos.right+trackedPos.left) / 2.0f - (15.05f*(float)labelString.length()/2.0f), trackedPos.top, labelString, boxPaint);
+//      final String labelString =
+//          !TextUtils.isEmpty(recognition.title)
+//              ? String.format("%s %.2f", recognition.title, (100 * recognition.detectionConfidence))
+//              : String.format("%.2f", (100 * recognition.detectionConfidence));
+//      //            borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top,
+//      // labelString);
+//      borderedText.drawText(
+//          canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
     }
   }
 
@@ -168,6 +170,7 @@ public class MultiBoxTracker {
       frameHeight = h;
       this.sensorOrientation = sensorOrientation;
       initialized = true;
+
     }
 
     if (objectTracker == null) {

@@ -22,7 +22,6 @@ import com.strawberryjulats.roomtips.DetectorActivity;
 import com.strawberryjulats.roomtips.FurnitureAdapter;
 import com.strawberryjulats.roomtips.R;
 import jp.wasabeef.blurry.Blurry;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -41,6 +40,8 @@ public class IkeaAPIAccessTask extends AsyncTask<String, Void, ArrayList<Product
         publishProgress();
         int minPrice = params.length >= 2 ? Integer.parseInt(params[1]) : 0;
         int maxPrice = params.length >= 3 ? Integer.parseInt(params[2]) : 9999;
+        Log.d("TESTTEST", "Min price: " + minPrice);
+        Log.d("TESTTEST", "Max price: " + maxPrice);
         FurnitureAdapter.products = NativeAPIKt.getSuggestionsIkea(params[0], 10, minPrice, maxPrice, false, 2);
         return FurnitureAdapter.products;
     }
