@@ -74,7 +74,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final float TEXT_SIZE_DIP = 10;
   private static final String TAG = "DetectorActivity";
   OverlayView trackingOverlay;
-  private Integer sensorOrientation;
+  public static Integer sensorOrientation;
 
     //1280 by 720
     // 2560 by 1440

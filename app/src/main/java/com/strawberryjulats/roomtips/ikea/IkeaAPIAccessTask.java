@@ -5,10 +5,13 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Camera;
+import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -65,12 +68,12 @@ public class IkeaAPIAccessTask extends AsyncTask<String, Void, ArrayList<Product
         Log.i("COOL",Integer.toString(height));
         Log.i("COOL",Integer.toString(width));
 
-        CameraConnectionFragment.recyclerView.animate().translationXBy(1440f).setDuration(1).setListener(new AnimatorListenerAdapter() {
+        CameraConnectionFragment.recyclerView.animate().translationXBy((float)width).setDuration(1).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 CameraConnectionFragment.recyclerView.setVisibility(View.VISIBLE);
-                CameraConnectionFragment.recyclerView.animate().translationXBy(-1440f).setDuration(2000).setListener(null);
+                CameraConnectionFragment.recyclerView.animate().translationXBy(-(float)width).setDuration(2000).setListener(null);
             }
         });
         CameraConnectionFragment.recyclerAdapter.notifyDataSetChanged();
@@ -84,8 +87,21 @@ public class IkeaAPIAccessTask extends AsyncTask<String, Void, ArrayList<Product
             Log.d(TAG, "NULL IMAGE");
         }
         // Check for rotated image
-        // TODO
-        Blurry.with(context).radius(50).animate(2000).from(image.getBitmap()).into(root.findViewById(R.id.imageView));
+        Bitmap img = image.getBitmap();
+        if(width > height){
+            Matrix matrix = new Matrix();
+            Log.i("COOL", DetectorActivity.sensorOrientation.toString());
+            int rotation;
+            if(DetectorActivity.sensorOrientation == 0){
+                rotation = -90;
+            } else {
+                rotation = 90;
+            }
+            matrix.postRotate(rotation);
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(img, width, height, true);
+            img = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+        }
+        Blurry.with(context).radius(50).animate(2000).from(img).into(root.findViewById(R.id.imageView));
 
     }
 }
