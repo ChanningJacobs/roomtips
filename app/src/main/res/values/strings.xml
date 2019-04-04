@@ -9,4 +9,8 @@
     <string name="app_title">roomtips</string>
     <string name="view_tutorial_prompt">take a quick tutorial</string>
     <string name="skip_tutorial_prompt">skip</string>
+    <string name="tutorial_opening">roomtips tutorial</string>
+    <string name="tutorial_next">next</string>
+    <string name="talkToVisual">talk</string>
+    <string name="visualListening">stop</string>
 </resources>

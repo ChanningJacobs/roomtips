@@ -2,19 +2,55 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/top_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TutorialActivity">
 
-    <Button
-        android:id="@+id/button"
+    <TextView
+        android:id="@+id/mainTutorialText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        android:onClick="fakeMethod"
+        android:padding="@dimen/subtitle"
+        android:text="@string/tutorial_opening"
+        android:textColor="@color/title"
+        android:textSize="@dimen/title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/nextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
+        android:background="@color/white"
+        android:onClick="nextAction"
+        android:stateListAnimator="@null"
+        android:text="@string/tutorial_next"
+        android:textAllCaps="false"
+        android:textColor="@color/subtitle"
+        android:textSize="@dimen/smalltext"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/visualButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="62dp"
+        android:background="@color/white"
+        android:text="@string/talkToVisual"
+        android:textColor="@color/subtitle"
+        android:textSize="@dimen/subtitle"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        android:stateListAnimator="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainTutorialText" />
 </android.support.constraint.ConstraintLayout>

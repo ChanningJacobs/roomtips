@@ -36,8 +36,8 @@ public class IkeaAPIAccessTask extends AsyncTask<String, Void, ArrayList<Product
     @Override
     protected ArrayList<Product> doInBackground(String... params) {
         publishProgress();
-        int minPrice = params.length >= 2 ? Integer.parseInt(params[1]) : 0;
-        int maxPrice = params.length >= 3 ? Integer.parseInt(params[2]) : 9999;
+        int maxPrice = params.length >= 2 ? Integer.parseInt(params[1]) : 9999;
+        int minPrice = params.length >= 3 ? Integer.parseInt(params[2]) : 0;
         FurnitureAdapter.products = NativeAPIKt.getSuggestionsIkea(params[0], 10, minPrice, maxPrice, false, 2);
         return FurnitureAdapter.products;
     }

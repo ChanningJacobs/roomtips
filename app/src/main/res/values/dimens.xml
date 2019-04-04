@@ -5,4 +5,5 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="title">50sp</dimen>
     <dimen name="subtitle">16sp</dimen>
+    <dimen name="smalltext">10sp</dimen>
 </resources>
