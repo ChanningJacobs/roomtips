@@ -168,14 +168,6 @@ public class MultiBoxTracker {
       frameHeight = h;
       this.sensorOrientation = sensorOrientation;
       initialized = true;
-
-      if (objectTracker == null) {
-        String message =
-            "Object tracking support not found. "
-                + "See tensorflow/examples/android/README.md for details.";
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-        Log.e(TAG, message);
-      }
     }
 
     if (objectTracker == null) {
