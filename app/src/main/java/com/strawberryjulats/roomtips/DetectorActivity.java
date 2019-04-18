@@ -66,7 +66,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/labelmap.txt";
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
   // Minimum detection confidence to track a detection.
-  private static final Set<String> TARGET_LABELS = new HashSet<String>(Arrays.asList("bed", "bench", "chair", "clock", "couch", "desk", "dining table", "door", "mirror", "potted plant", "sink", "toilet", "vase"));
+  private static final Set<String> TARGET_LABELS = new HashSet<String>(Arrays.asList("chair", "dining table"));
   private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
   private static final boolean MAINTAIN_ASPECT = false;
   private static final Size DESIRED_PREVIEW_SIZE = new Size(1280, 720);
@@ -127,7 +127,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             touchY = event.getX() / screenShrinkFactor;
             touchX = event.getY() / screenShrinkFactor;
             //Log.i(TAG, touchX + " " + touchY);
-            //Log.i(TAG, "Touched at (" + touchX + ", " + touchY + ")");
+            Log.i(TAG, "Touched at (" + touchX + ", " + touchY + ")");
             break;
     }
     return false;

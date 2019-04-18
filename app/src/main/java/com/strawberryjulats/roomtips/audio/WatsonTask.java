@@ -14,6 +14,7 @@ import com.ibm.watson.developer_cloud.assistant.v2.model.RuntimeEntity;
 import com.strawberryjulats.roomtips.CameraActivity;
 import com.strawberryjulats.roomtips.CameraConnectionFragment;
 import com.strawberryjulats.roomtips.DetectorActivity;
+import com.strawberryjulats.roomtips.FurnitureAdapter;
 import com.strawberryjulats.roomtips.R;
 import com.strawberryjulats.roomtips.env.IBMServices;
 import com.strawberryjulats.roomtips.ikea.IkeaAPIAccessTask;
@@ -80,8 +81,16 @@ public class WatsonTask extends AsyncTask<String, Void, MessageResponse> {
         Log.d(TAG, "Text to be read: " + text);
         Log.d(TAG, "Action to take: " + action);
 
-        runAction(action, params);
         Log.d(TAG, "SWITCHING");
+
+        if(DetectorActivity.queryWords == null){
+            text = "Please select an object before trying to adjust the price.";
+        }
+        if(action.equals("priceBetween") && params[1] == null){
+            text = "I didn't catch the second number.";
+            action = "";
+        }
+        runAction(action, params);
         new TextToSpeechTask(activity.get()).execute(text);
     }
 
@@ -112,6 +121,9 @@ public class WatsonTask extends AsyncTask<String, Void, MessageResponse> {
         }
         Log.d("TESTTEST", "PASSING IN MIN: " + lower + " AND MAX: " + upper);
         new IkeaAPIAccessTask(activity.get().findViewById(R.id.frame)).execute(DetectorActivity.queryWords, lower, upper);
-        CameraConnectionFragment.recyclerAdapter.notifyDataSetChanged();
+        if(FurnitureAdapter.products.size() > 0){
+            CameraConnectionFragment.recyclerAdapter.notifyDataSetChanged();
+            CameraConnectionFragment.recyclerView.scrollToPosition(0);
+        }
     }
 }

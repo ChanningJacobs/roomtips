@@ -55,8 +55,12 @@ public class RecordAudio {
             final BaseRecognizeCallback baseRecognizeCallback = new BaseRecognizeCallback() {
                 @Override
                 public void onTranscription(SpeechRecognitionResults speechRecognitionResults) {
-                    Log.d(TAG, "Recognized stuff: " + speechRecognitionResults.getResults().get(0).getAlternatives().get(0).getTranscript());
-                    new WatsonTask(activity).execute(speechRecognitionResults.getResults().get(0).getAlternatives().get(0).getTranscript());
+                    try{
+                        Log.d(TAG, "Recognized stuff: " + speechRecognitionResults.getResults().get(0).getAlternatives().get(0).getTranscript());
+                        new WatsonTask(activity).execute(speechRecognitionResults.getResults().get(0).getAlternatives().get(0).getTranscript());
+                    } catch (Exception e){
+                        new TextToSpeechTask(activity).execute("No response from IBM Watson.");
+                    }
                 }
             };
             new Thread(new Runnable() {

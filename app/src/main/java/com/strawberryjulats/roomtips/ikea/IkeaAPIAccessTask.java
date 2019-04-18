@@ -44,7 +44,7 @@ public class IkeaAPIAccessTask extends AsyncTask<String, Void, ArrayList<Product
         Log.d("TESTTEST", "Min price: " + minPrice);
         Log.d("TESTTEST", "Max price: " + maxPrice);
 
-        FurnitureAdapter.products = NativeAPIKt.getSuggestionsIkea(params[0], 10, minPrice, maxPrice, false, 2);
+        FurnitureAdapter.products = NativeAPIKt.getSuggestionsIkea(params[0], 10, minPrice, maxPrice, true, 2);
         return FurnitureAdapter.products;
     }
 
