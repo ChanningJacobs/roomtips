@@ -284,6 +284,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                   if(touchX >= location.left && touchX <= location.right && touchY >= location.top && touchY <= location.bottom){
                       // IBM image classification or just use current classifier
                       String name = result.getTitle();
+                      if(name.equals("dining table")){
+                          name = "table";
+                      }
                       queryWords = name;
                       /** edit here to add in minPrice and maxPrice, as well as altering the color **/
                       // ASYNC task should be called from main thread, not background thread...

@@ -85,6 +85,7 @@ public abstract class CameraActivity extends AppCompatActivity
     private int yRowStride;
     private Runnable postInferenceCallback;
     private Runnable imageConverter;
+    boolean isRecording = false;
 
 
     protected ImageView bottomSheetArrowImageView;
@@ -103,6 +104,10 @@ public abstract class CameraActivity extends AppCompatActivity
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isRecording = !isRecording;
+                if(isRecording) test.setText("Stop");
+                else test.setText("Talk");
+
                 Vibrator vibrate = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                 vibrate.vibrate(VibrationEffect.createOneShot(200, 200));
                 recordAudio.record();

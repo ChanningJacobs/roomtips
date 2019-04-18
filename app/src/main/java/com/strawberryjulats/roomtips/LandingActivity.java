@@ -38,6 +38,10 @@ public class LandingActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
         }
 
+        if(!hasPermissions(this, PERMISSIONS)){
+            this.finishAffinity();
+        }
+
 
         // Find all of the UI elements
         landingTitle = findViewById(R.id.landingTitle);

@@ -46,6 +46,11 @@
     <Button
         android:id="@+id/test"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:text="@string/talkToVisual"
+        android:textColor="@color/subtitle"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
 </android.support.design.widget.CoordinatorLayout>
